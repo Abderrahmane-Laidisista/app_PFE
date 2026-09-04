@@ -101,8 +101,8 @@ class PredictionResponse {
         break;
     }
     
-    // Based on risk level
-    if (riskLevel == 'ÉLEVÉ' || riskLevel == 'HIGH') {
+    // Based on risk level — handle all V6.0 risk levels
+    if (riskLevel == 'CRITICAL' || riskLevel == 'ÉLEVÉ' || riskLevel == 'HIGH') {
       if (!recommendations.contains('rec_consult_dermatologist')) {
         recommendations.insert(0, 'rec_consult_dermatologist');
       }
@@ -111,20 +111,23 @@ class PredictionResponse {
     return recommendations;
   }
   
-  // Get risk level color
+  // Get risk level color — aligned with backend V6.0 RiskLevel enum
+  // Backend returns: LOW | MODERATE | HIGH | CRITICAL
   Color getRiskLevelColor() {
     switch (riskLevel.toUpperCase()) {
       case 'FAIBLE':
       case 'LOW':
-        return const Color(0xFF4CAF50); // Green
+        return const Color(0xFF22C55E); // Green  (#22c55e matches backend RISK_COLOR)
       case 'MODÉRÉ':
       case 'MODERATE':
-        return const Color(0xFFFF9800); // Orange
+        return const Color(0xFFF59E0B); // Amber  (#f59e0b matches backend RISK_COLOR)
       case 'ÉLEVÉ':
       case 'HIGH':
-        return const Color(0xFFF44336); // Red
+        return const Color(0xFFEF4444); // Red    (#ef4444 matches backend RISK_COLOR)
+      case 'CRITICAL':
+        return const Color(0xFF7C3AED); // Purple (#7c3aed matches backend RISK_COLOR)
       default:
-        return const Color(0xFF9E9E9E); // Grey
+        return const Color(0xFF9E9E9E); // Grey — fallback
     }
   }
   

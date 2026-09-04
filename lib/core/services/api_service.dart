@@ -69,14 +69,19 @@ class ApiService extends GetxService {
       request.fields['age'] = metadata.age.toString();
       request.fields['sex'] = _mapSex(metadata.sex);
       request.fields['localization'] = _mapRegion(metadata.region);
-      
-      // Optional: send patient_id if needed
-      // request.fields['patient_id'] = 'FLUTTER_USER_123';
+      request.fields['grew'] = metadata.grew.toString();
+      request.fields['bleed'] = metadata.bleed.toString();
+      request.fields['diameter_1'] = metadata.diameter.toString();
+      request.fields['skin_cancer_history'] = metadata.skinCancerHistory.toString();
+      // Send elevation if provided (new V6.0 field)
+      if (metadata.elevation != null) {
+        request.fields['elevation'] = metadata.elevation.toString();
+      }
 
       debugPrint('🚀 Sending POST request to: $uri');
       debugPrint('📦 Payload: age=${metadata.age}, sex=${_mapSex(metadata.sex)}, localization=${_mapRegion(metadata.region)}');
 
-      final streamedResponse = await request.send().timeout(const Duration(seconds: 30));
+      final streamedResponse = await request.send().timeout(const Duration(seconds: 90)); // 90s for CPU inference
       final response = await http.Response.fromStream(streamedResponse);
 
       debugPrint('📥 Response status: ${response.statusCode}');

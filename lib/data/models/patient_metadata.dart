@@ -6,6 +6,7 @@ class PatientMetadata {
   final bool bleed;
   final double diameter;
   final bool skinCancerHistory;
+  final bool? elevation; // New in V6.0: is the lesion elevated/raised?
   
   PatientMetadata({
     required this.age,
@@ -15,6 +16,7 @@ class PatientMetadata {
     required this.bleed,
     required this.diameter,
     required this.skinCancerHistory,
+    this.elevation, // optional
   });
   
   // Convert to JSON for API request
@@ -27,6 +29,7 @@ class PatientMetadata {
       'bleed': bleed,
       'diameter_1': diameter,
       'skin_cancer_history': skinCancerHistory,
+      if (elevation != null) 'elevation': elevation,
     };
   }
   
@@ -40,6 +43,7 @@ class PatientMetadata {
       bleed: json['bleed'],
       diameter: json['diameter_1'].toDouble(),
       skinCancerHistory: json['skin_cancer_history'],
+      elevation: json['elevation'] as bool?,
     );
   }
   
@@ -52,6 +56,7 @@ class PatientMetadata {
     bool? bleed,
     double? diameter,
     bool? skinCancerHistory,
+    bool? elevation,
   }) {
     return PatientMetadata(
       age: age ?? this.age,
@@ -61,6 +66,7 @@ class PatientMetadata {
       bleed: bleed ?? this.bleed,
       diameter: diameter ?? this.diameter,
       skinCancerHistory: skinCancerHistory ?? this.skinCancerHistory,
+      elevation: elevation ?? this.elevation,
     );
   }
   
@@ -75,6 +81,6 @@ class PatientMetadata {
   
   @override
   String toString() {
-    return 'PatientMetadata(age: $age, sex: $sex, region: $region, grew: $grew, bleed: $bleed, diameter: $diameter, skinCancerHistory: $skinCancerHistory)';
+    return 'PatientMetadata(age: $age, sex: $sex, region: $region, grew: $grew, bleed: $bleed, diameter: $diameter, skinCancerHistory: $skinCancerHistory, elevation: $elevation)';
   }
 }
