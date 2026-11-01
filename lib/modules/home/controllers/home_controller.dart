@@ -2,33 +2,41 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../app/routes/app_routes.dart';
+import '../../../core/services/auth_service.dart';
 import '../../../core/services/connectivity_service.dart';
+import '../../../data/providers/local_storage_provider.dart';
+import '../../main_layout/controllers/main_layout_controller.dart';
 
 class HomeController extends GetxController {
   final ConnectivityService _connectivityService = Get.find<ConnectivityService>();
+  final AuthService _auth = Get.find<AuthService>();
+  final LocalStorageProvider _storage = Get.find<LocalStorageProvider>();
   final ImagePicker _imagePicker = ImagePicker();
-  
+
   final isLoading = false.obs;
-  
+
+  bool get isAuthenticated => _storage.isAuthenticated;
+  bool get isDoctor => _auth.isDoctor;
+  String? get clinicianName => _auth.doctorFullName;
+
   @override
   void onInit() {
     super.onInit();
     _checkConnectivity();
   }
-  
- void _checkConnectivity() {
-  if (!_connectivityService.isOnline.value) {
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Get.snackbar(
-        "No Internet",
-        "Please check your connection",
-      );
-    });
-
+  void _checkConnectivity() {
+    if (!_connectivityService.isOnline.value) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Get.snackbar(
+          "Offline Mode",
+          "You are offline. Diagnostic histories will load from local cache.",
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      });
+    }
   }
-}
-  
+
   // Navigate to Camera Screen
   Future<void> takePhoto() async {
     try {
@@ -38,21 +46,21 @@ class HomeController extends GetxController {
       Get.snackbar('error'.tr, 'error_camera_permission'.tr);
     }
   }
-  
+
   // Upload from Gallery
   Future<void> uploadFromGallery() async {
     try {
       final XFile? image = await _imagePicker.pickImage(
         source: ImageSource.gallery,
-        imageQuality: 85,
-        maxWidth: 1024,
-        maxHeight: 1024,
+        imageQuality: 90,
+        maxWidth: 1200,
+        maxHeight: 1200,
       );
-      
+
       if (image != null) {
-        // Navigate to Clinical Form with image path
+        // Route through Consent before Clinical Form
         Get.toNamed(
-          AppRoutes.CLINICAL_FORM,
+          AppRoutes.CONSENT,
           arguments: {'imagePath': image.path},
         );
       }
@@ -61,51 +69,56 @@ class HomeController extends GetxController {
       Get.snackbar('error'.tr, 'error_invalid_image'.tr);
     }
   }
-  
-  // Navigate to History
+
   void viewHistory() {
     Get.toNamed(AppRoutes.HISTORY);
   }
-  
-  // Navigate to Settings
+
   void openSettings() {
     Get.toNamed(AppRoutes.SETTINGS);
   }
-  
-  // Navigate to Education
+
   void openEducation() {
     Get.toNamed(AppRoutes.EDUCATION);
   }
-  
-  // Navigate to About
+
   void openAbout() {
-    Get.dialog(
-      AlertDialog(
-        title: Text('about'.tr),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('app_name'.tr, 
-              style: Get.textTheme.titleLarge,
-            ),
-            const SizedBox(height: 8),
-            Text('app_subtitle'.tr,
-              style: Get.textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 16),
-            Text('app_version'.tr + ': 1.0.0',
-              style: Get.textTheme.bodySmall,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text('done'.tr),
-          ),
-        ],
-      ),
-    );
+    Get.toNamed(AppRoutes.ABOUT);
+  }
+
+  void openLogin() {
+    Get.toNamed(AppRoutes.LOGIN);
+  }
+
+  void openProfile() {
+    if (Get.isRegistered<MainLayoutController>()) {
+      Get.find<MainLayoutController>().changeTab(3);
+    } else {
+      Get.toNamed(AppRoutes.PROFILE);
+    }
+  }
+
+  void openPatients() {
+    if (Get.isRegistered<MainLayoutController>()) {
+      Get.find<MainLayoutController>().changeTab(1);
+    } else {
+      Get.toNamed(AppRoutes.PATIENTS);
+    }
+  }
+
+  void openReferrals() {
+    if (Get.isRegistered<MainLayoutController>()) {
+      Get.find<MainLayoutController>().changeTab(2);
+    } else {
+      Get.toNamed(AppRoutes.REFERRALS);
+    }
+  }
+
+  void openDoctorDirectory() {
+    Get.toNamed(AppRoutes.DOCTOR_DIRECTORY);
+  }
+
+  void openQRFollowUp() {
+    Get.toNamed(AppRoutes.QR_FOLLOWUP);
   }
 }

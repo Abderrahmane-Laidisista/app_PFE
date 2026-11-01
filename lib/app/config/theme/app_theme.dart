@@ -182,7 +182,7 @@ class AppTheme {
         activeTrackColor: AppColors.primary,
         inactiveTrackColor: AppColors.grey300,
         thumbColor: AppColors.primary,
-        overlayColor: AppColors.primaryLight.withOpacity(0.2),
+        overlayColor: AppColors.primaryLight.withValues(alpha: 0.2),
         valueIndicatorColor: AppColors.primary,
         valueIndicatorTextStyle: AppTextStyles.labelSmall.copyWith(
           color: Colors.white,

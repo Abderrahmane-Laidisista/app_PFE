@@ -1,28 +1,28 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import '../../../core/services/storage_service.dart';
+import 'package:get/get.dart';
+import '../../../data/models/diagnosis_history.dart';
+import '../../../data/repositories/history_repository.dart';
 
 class HistoryController extends GetxController {
-  final StorageService _storageService = Get.find<StorageService>();
-  
-  final history = <Map<String, dynamic>>[].obs;
+  final HistoryRepository _repo = Get.find<HistoryRepository>();
+
+  final historyItems = <DiagnosisHistoryItem>[].obs;
   final isLoading = true.obs;
-  
+  final selectedRiskFilter = 'ALL'.obs;
+
   @override
   void onInit() {
     super.onInit();
     loadHistory();
   }
-  
+
   Future<void> loadHistory() async {
     try {
       isLoading.value = true;
-      
-      // Load from storage
-      final historyData = _storageService.diagnosisHistory;
-      history.value = historyData;
-      
-      debugPrint('✅ Loaded ${history.length} history entries');
+      final risk = selectedRiskFilter.value == 'ALL' ? null : selectedRiskFilter.value;
+      final list = await _repo.getAnalyses(riskLevel: risk);
+      historyItems.value = list;
+      debugPrint('✅ Loaded ${historyItems.length} history entries (Filter: ${selectedRiskFilter.value})');
     } catch (e) {
       debugPrint('❌ Error loading history: $e');
       Get.snackbar(
@@ -34,14 +34,18 @@ class HistoryController extends GetxController {
       isLoading.value = false;
     }
   }
-  
+
+  void filterByRisk(String risk) {
+    selectedRiskFilter.value = risk;
+    loadHistory();
+  }
+
   Future<void> deleteEntry(int index) async {
     try {
-      // Show confirmation dialog
       final confirmed = await Get.dialog<bool>(
         AlertDialog(
           title: Text('delete_confirmation'.tr),
-          content: Text('This action cannot be undone'),
+          content: const Text('This action will remove the record from history.'),
           actions: [
             TextButton(
               onPressed: () => Get.back(result: false),
@@ -57,83 +61,43 @@ class HistoryController extends GetxController {
           ],
         ),
       );
-      
-      if (confirmed == true) {
-        await _storageService.removeDiagnosisFromHistory(index);
-        await loadHistory();
-        
+
+      if (confirmed == true && index < historyItems.length) {
+        final item = historyItems[index];
+        await _repo.deleteAnalysis(item.id, index);
+        historyItems.removeAt(index);
+
         Get.snackbar(
           'success'.tr,
           'deleted_successfully'.tr,
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Get.theme.colorScheme.primary,
-          colorText: Colors.white,
         );
       }
     } catch (e) {
       debugPrint('❌ Error deleting entry: $e');
-      Get.snackbar(
-        'error'.tr,
-        'Failed to delete entry',
-        snackPosition: SnackPosition.BOTTOM,
-      );
     }
   }
-  
+
   Future<void> clearAllHistory() async {
-    try {
-      final confirmed = await Get.dialog<bool>(
-        AlertDialog(
-          title: Text('Clear All History?'),
-          content: Text('This will permanently delete all diagnosis history. This action cannot be undone.'),
-          actions: [
-            TextButton(
-              onPressed: () => Get.back(result: false),
-              child: Text('cancel'.tr),
-            ),
-            TextButton(
-              onPressed: () => Get.back(result: true),
-              style: TextButton.styleFrom(
-                foregroundColor: Get.theme.colorScheme.error,
-              ),
-              child: Text('Clear All'),
-            ),
-          ],
-        ),
-      );
-      
-      if (confirmed == true) {
-        await _storageService.clearHistory();
-        await loadHistory();
-        
-        Get.snackbar(
-          'success'.tr,
-          'History cleared successfully',
-          snackPosition: SnackPosition.BOTTOM,
-        );
-      }
-    } catch (e) {
-      debugPrint('❌ Error clearing history: $e');
-    }
-  }
-  
-  String formatDate(String isoDate) {
-    try {
-      final date = DateTime.parse(isoDate);
-      final now = DateTime.now();
-      final difference = now.difference(date);
-      
-      if (difference.inDays == 0) {
-        return 'Today ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
-      } else if (difference.inDays == 1) {
-        return 'Yesterday';
-      } else if (difference.inDays < 7) {
-        return '${difference.inDays} days ago';
-      } else {
-        return '${date.day}/${date.month}/${date.year}';
-      }
-    } catch (e) {
-      return isoDate;
+    final confirmed = await Get.dialog<bool>(
+      AlertDialog(
+        title: const Text('Clear All History?'),
+        content: const Text('This will delete all cached diagnosis history. Are you sure?'),
+        actions: [
+          TextButton(onPressed: () => Get.back(result: false), child: Text('cancel'.tr)),
+          TextButton(
+            onPressed: () => Get.back(result: true),
+            style: TextButton.styleFrom(foregroundColor: Get.theme.colorScheme.error),
+            child: const Text('Clear All'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await _repo.clearAll();
+      historyItems.clear();
+      Get.snackbar('success'.tr, 'History cleared', snackPosition: SnackPosition.BOTTOM);
     }
   }
 }

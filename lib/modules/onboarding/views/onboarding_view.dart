@@ -1,8 +1,7 @@
-import 'package:derma_diagnostic_app_1/app/config/theme/app_colores.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../app/config/theme/app_colores.dart';
 import '../controllers/onboarding_controller.dart';
-
 
 class OnboardingView extends GetView<OnboardingController> {
   const OnboardingView({super.key});
@@ -10,42 +9,46 @@ class OnboardingView extends GetView<OnboardingController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
-            // Skip button
+            // Skip Button
             Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  const SizedBox(width: 48),
                   TextButton(
-                    onPressed: controller.skipOnboarding,
-                    child: Text('skip'.tr),
+                    onPressed: controller.finishOnboarding,
+                    child: Text(
+                      'skip'.tr,
+                      style: const TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ],
               ),
             ),
-            
+
             // Page View
             Expanded(
               child: PageView.builder(
                 controller: controller.pageController,
-                onPageChanged: controller.onPageChanged,
                 itemCount: controller.totalPages,
+                onPageChanged: controller.onPageChanged,
                 itemBuilder: (context, index) {
-                  final page = controller.pages[index];
-                  return _buildPage(page);
+                  return _buildPage(controller.pages[index]);
                 },
               ),
             ),
-            
+
             // Bottom Navigation
             Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
                 children: [
-                  // Page Indicators
+                  // Indicators
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(
@@ -53,38 +56,74 @@ class OnboardingView extends GetView<OnboardingController> {
                       (index) => _buildIndicator(index),
                     ),
                   ),
-                  
-                  const SizedBox(height: 32),
-                  
-                  // Navigation Buttons
-                  Obx(() => Row(
-                    children: [
-                      // Previous Button (if not first page)
-                      if (controller.currentPage.value > 0)
+                  const SizedBox(height: 28),
+
+                  // Actions
+                  Obx(() {
+                    final isLastPage = controller.currentPage.value == controller.totalPages - 1;
+
+                    if (isLastPage) {
+                      return Column(
+                        children: [
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: controller.goToRegister,
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                backgroundColor: AppColors.primary,
+                              ),
+                              child: const Text('Register Clinician Account', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: OutlinedButton(
+                                  onPressed: controller.goToLogin,
+                                  style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
+                                  child: const Text('Sign In'),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: TextButton(
+                                  onPressed: controller.finishOnboarding,
+                                  child: const Text('Browse as Guest'),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    }
+
+                    return Row(
+                      children: [
+                        if (controller.currentPage.value > 0)
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: controller.previousPage,
+                              style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
+                              child: Text('previous'.tr),
+                            ),
+                          ),
+                        if (controller.currentPage.value > 0) const SizedBox(width: 16),
                         Expanded(
-                          child: OutlinedButton(
-                            onPressed: controller.previousPage,
-                            child: Text('previous'.tr),
+                          flex: controller.currentPage.value > 0 ? 1 : 2,
+                          child: ElevatedButton(
+                            onPressed: controller.nextPage,
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              backgroundColor: AppColors.primary,
+                            ),
+                            child: Text('next'.tr, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
                           ),
                         ),
-                      
-                      if (controller.currentPage.value > 0)
-                        const SizedBox(width: 16),
-                      
-                      // Next/Get Started Button
-                      Expanded(
-                        flex: controller.currentPage.value > 0 ? 1 : 2,
-                        child: ElevatedButton(
-                          onPressed: controller.nextPage,
-                          child: Text(
-                            controller.currentPage.value == controller.totalPages - 1
-                                ? 'get_started'.tr
-                                : 'next'.tr,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )),
+                      ],
+                    );
+                  }),
                 ],
               ),
             ),
@@ -93,46 +132,39 @@ class OnboardingView extends GetView<OnboardingController> {
       ),
     );
   }
-  
+
   Widget _buildPage(OnboardingPage page) {
     return Padding(
-      padding: const EdgeInsets.all(40),
+      padding: const EdgeInsets.all(32),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Icon
           Container(
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: page.color.withOpacity(0.1),
+              color: page.color.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
               page.icon,
-              size: 100,
+              size: 88,
               color: page.color,
             ),
           ),
-          
-          const SizedBox(height: 48),
-          
-          // Title
+          const SizedBox(height: 40),
           Text(
-            page.title.tr,
+            page.isRawText ? page.title : page.title.tr,
             textAlign: TextAlign.center,
-            style: Get.textTheme.headlineLarge?.copyWith(
+            style: Get.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
             ),
           ),
-          
-          const SizedBox(height: 16),
-          
-          // Description
+          const SizedBox(height: 14),
           Text(
-            page.description.tr,
+            page.isRawText ? page.description : page.description.tr,
             textAlign: TextAlign.center,
-            style: Get.textTheme.bodyLarge?.copyWith(
+            style: Get.textTheme.bodyMedium?.copyWith(
               color: AppColors.textSecondary,
               height: 1.5,
             ),
@@ -141,7 +173,7 @@ class OnboardingView extends GetView<OnboardingController> {
       ),
     );
   }
-  
+
   Widget _buildIndicator(int index) {
     return Obx(() {
       final isActive = controller.currentPage.value == index;

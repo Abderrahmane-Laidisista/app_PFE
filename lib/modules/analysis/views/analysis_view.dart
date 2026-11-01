@@ -37,7 +37,7 @@ class AnalysisView extends GetView<AnalysisController> {
                         child: Container(
                           padding: const EdgeInsets.all(32),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
@@ -68,7 +68,7 @@ class AnalysisView extends GetView<AnalysisController> {
                     'analysis_subtitle'.tr,
                     textAlign: TextAlign.center,
                     style: Get.textTheme.bodyLarge?.copyWith(
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                     ),
                   ),
                   
@@ -82,7 +82,7 @@ class AnalysisView extends GetView<AnalysisController> {
                         width: double.infinity,
                         child: LinearProgressIndicator(
                           value: controller.analysisProgress.value,
-                          backgroundColor: Colors.white.withOpacity(0.3),
+                          backgroundColor: Colors.white.withValues(alpha: 0.3),
                           valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
                           minHeight: 8,
                           borderRadius: BorderRadius.circular(4),
@@ -106,7 +106,7 @@ class AnalysisView extends GetView<AnalysisController> {
                       Text(
                         controller.currentStep.value,
                         style: Get.textTheme.bodyMedium?.copyWith(
-                          color: Colors.white.withOpacity(0.8),
+                          color: Colors.white.withValues(alpha: 0.8),
                         ),
                       ),
                     ],
@@ -121,7 +121,7 @@ class AnalysisView extends GetView<AnalysisController> {
                       vertical: 12,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(

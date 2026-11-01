@@ -21,7 +21,7 @@ class SplashView extends GetView<SplashController> {
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -51,7 +51,7 @@ class SplashView extends GetView<SplashController> {
                   'app_subtitle'.tr,
                   textAlign: TextAlign.center,
                   style: Get.textTheme.bodyLarge?.copyWith(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                   ),
                 ),
               ),
