@@ -90,6 +90,12 @@ class AppColors {
     end: Alignment.bottomRight,
   );
 
+  static const Gradient secondaryGradient = LinearGradient(
+    colors: [Color(0xFF1E9E3C), Color(0xFF2DC653)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
   static const Gradient heroGradient = LinearGradient(
     colors: [Color(0xFF023E8A), Color(0xFF0077B6), Color(0xFF00B4D8)],
     begin: Alignment.topCenter,

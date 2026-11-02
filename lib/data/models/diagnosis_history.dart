@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'prediction_response.dart';
 
 /// Single item in diagnosis history, synchronized between server and local cache.

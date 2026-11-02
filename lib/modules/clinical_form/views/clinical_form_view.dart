@@ -176,7 +176,7 @@ class ClinicalFormView extends GetView<ClinicalFormController> {
                               value: region,
                               child: Text(region.tr),
                             );
-                          }).toList>,
+                          }).toList(),
                           onChanged: (value) {
                             if (value != null) {
                               controller.setRegion(value);

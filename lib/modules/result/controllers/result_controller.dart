@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../app/config/theme/app_colores.dart';
+import '../../../app/config/api/api_constants.dart';
 import '../../../app/routes/app_routes.dart';
+import '../../../data/providers/api_provider.dart';
 import '../../../core/services/pdf_service.dart';
 import '../../../core/services/storage_service.dart';
 import '../../../data/models/patient_metadata.dart';
@@ -20,7 +22,9 @@ class ResultController extends GetxController {
   PredictionResponse? result;
 
   final showProbabilities = false.obs;
-  final showHeatmap = false.obs; // Toggle between Raw Dermoscopy and Grad-CAM++ Saliency Heatmap
+  final showHeatmap = false.obs;
+  final isLoadingGradcam = false.obs;
+  final resolvedGradcamUrl = RxnString(); // Toggle between Raw Dermoscopy and Grad-CAM++ Saliency Heatmap
   final isSubmittingFeedback = false.obs;
   final feedbackSubmitted = false.obs;
 
@@ -49,8 +53,39 @@ class ResultController extends GetxController {
     showProbabilities.value = !showProbabilities.value;
   }
 
-  void toggleHeatmap() {
-    showHeatmap.value = !showHeatmap.value;
+  Future<void> toggleHeatmap() async {
+    final targetState = !showHeatmap.value;
+    showHeatmap.value = targetState;
+
+    if (targetState &&
+        resolvedGradcamUrl.value == null &&
+        result?.gradcamHeatmapBase64 == null &&
+        result?.analysisId != null &&
+        _localStorage.isAuthenticated) {
+      isLoadingGradcam.value = true;
+      try {
+        final api = Get.find<ApiProvider>();
+        for (int attempt = 0; attempt < 3; attempt++) {
+          final resp = await api.get(
+            ApiConstants.analysisDetail(result!.analysisId!),
+            requiresAuth: true,
+          );
+          if (resp.statusCode == 200) {
+            final data = jsonDecode(resp.body) as Map<String, dynamic>;
+            final rawUrl = data['gradcam_url'] as String?;
+            if (rawUrl != null && rawUrl.isNotEmpty) {
+              resolvedGradcamUrl.value = rawUrl;
+              break;
+            }
+          }
+          await Future.delayed(const Duration(milliseconds: 800));
+        }
+      } catch (e) {
+        debugPrint('⚠️ Failed to fetch async Grad-CAM URL: $e');
+      } finally {
+        isLoadingGradcam.value = false;
+      }
+    }
   }
 
   Future<void> saveResult() async {
@@ -69,7 +104,12 @@ class ResultController extends GetxController {
       };
 
       await _storageService.addDiagnosisToHistory(historyEntry);
-      debugPrint('✅ Result saved to history');
+      final existing = _localStorage.getOfflineAnalyses();
+      final alreadySaved = existing.any((e) => e['id'] == historyEntry['id']);
+      if (!alreadySaved) {
+        await _localStorage.addOfflineAnalysis(historyEntry);
+      }
+      debugPrint('✅ Result saved to history and synchronized with offline analyses');
 
       Get.snackbar(
         'success'.tr,

@@ -55,7 +55,7 @@ class AnalysisController extends GetxController {
       await Future.delayed(const Duration(milliseconds: 300));
 
       // Step 3: Multimodal inference
-      currentStep.value = 'Analyzing with Multimodal ResNet-50...';
+      currentStep.value = 'Analyzing with Multimodal EfficientNet-B3...';
       analysisProgress.value = 0.8;
 
       // REST API call to FastAPI backend

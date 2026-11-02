@@ -151,15 +151,17 @@ class AuthService extends GetxService {
   /// Logout clinician and clear session
   Future<void> logout() async {
     try {
-      if (isAuthenticated) {
+      final refreshToken = _storage.getRefreshToken();
+      if (refreshToken != null && refreshToken.isNotEmpty) {
         await _api.post(
           ApiConstants.logout,
+          body: {'refresh_token': refreshToken},
           requiresAuth: true,
         );
       }
     } catch (_) {}
     await _storage.clearSession();
     currentUser.value = null;
-    Get.offAllNamed(AppRoutes.HOME);
+    Get.offAllNamed(AppRoutes.LOGIN);
   }
 }

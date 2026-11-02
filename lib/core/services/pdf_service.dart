@@ -144,6 +144,10 @@ class PdfService extends GetxService {
   pw.Widget _buildDiagnosisSection(PredictionResponse result, pw.ImageProvider? image) {
     PdfColor riskColor;
     switch (result.riskLevel.toUpperCase()) {
+      case 'CRITICAL':
+      case 'CRITIQUE':
+        riskColor = PdfColors.purple700;
+        break;
       case 'HIGH':
       case 'ÉLEVÉ':
         riskColor = PdfColors.red700;

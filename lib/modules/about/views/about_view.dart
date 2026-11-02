@@ -69,7 +69,7 @@ class AboutView extends GetView<AboutController> {
                     const SizedBox(height: 12),
                     _buildBullet(
                       'AI Architecture',
-                      'PyTorch Multimodal Cross-Attention Network (ResNet-50 Dermoscopy Feature Extractor + Tabular Metadata MLP)',
+                      'PyTorch Multimodal Cross-Attention Network (EfficientNet-B3 Dermoscopy Feature Extractor + Tabular Metadata MLP)',
                     ),
                     const SizedBox(height: 12),
                     _buildBullet(

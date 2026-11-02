@@ -87,10 +87,10 @@ class ResultView extends GetView<ResultController> {
           width: double.infinity,
           height: 260,
         );
-      } else if (isHeatmap && result.gradcamUrl != null && result.gradcamUrl!.isNotEmpty) {
+      } else if (isHeatmap && (controller.resolvedGradcamUrl.value ?? result.gradcamUrl) != null && (controller.resolvedGradcamUrl.value ?? result.gradcamUrl)!.isNotEmpty) {
         // Remote Grad-CAM URL
         imageContent = Image.network(
-          result.gradcamUrl!,
+          (controller.resolvedGradcamUrl.value ?? result.gradcamUrl)!,
           fit: BoxFit.cover,
           width: double.infinity,
           height: 260,

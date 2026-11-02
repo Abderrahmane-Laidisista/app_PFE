@@ -90,7 +90,7 @@ const Map<String, String> ar = {
 
   // Analysis Screen
   'analyzing': 'جارٍ التحليل السريري...',
-  'analysis_subtitle': 'يتم فحص الصورة والبيانات بواسطة نموذج ResNet-50 متعدد الوسائط...',
+  'analysis_subtitle': 'يتم فحص الصورة والبيانات بواسطة نموذج EfficientNet-B3 متعدد الوسائط...',
   'please_wait': 'يرجى الانتظار لحظات',
 
   // Result Screen

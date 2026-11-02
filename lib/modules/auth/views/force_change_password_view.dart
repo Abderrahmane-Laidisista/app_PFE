@@ -1,8 +1,11 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../app/config/api/api_constants.dart';
 import '../../../app/config/theme/app_colores.dart';
 import '../../../app/routes/app_routes.dart';
 import '../../../core/services/auth_service.dart';
+import '../../../data/providers/api_provider.dart';
 
 class ForceChangePasswordView extends StatefulWidget {
   const ForceChangePasswordView({super.key});
@@ -12,6 +15,7 @@ class ForceChangePasswordView extends StatefulWidget {
 }
 
 class _ForceChangePasswordViewState extends State<ForceChangePasswordView> {
+  final _currentPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -46,13 +50,27 @@ class _ForceChangePasswordViewState extends State<ForceChangePasswordView> {
               ),
               const SizedBox(height: 24),
               TextFormField(
+                controller: _currentPasswordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Current / Temporary Password',
+                  prefixIcon: Icon(Icons.key_outlined),
+                ),
+                validator: (v) => (v == null || v.isEmpty) ? 'Enter your temporary password' : null,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
                 controller: _newPasswordController,
                 obscureText: true,
                 decoration: const InputDecoration(
-                  labelText: 'New Strong Password',
+                  labelText: 'New Strong Password (min 8 chars)',
                   prefixIcon: Icon(Icons.lock_outline),
                 ),
-                validator: (v) => (v == null || v.length < 8) ? 'Password must be at least 8 characters' : null,
+                validator: (v) {
+                  if (v == null || v.length < 8) return 'Password must be at least 8 characters';
+                  if (v == _currentPasswordController.text) return 'New password must differ from temporary password';
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -82,14 +100,53 @@ class _ForceChangePasswordViewState extends State<ForceChangePasswordView> {
   Future<void> _submitPasswordChange() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
-    await Future.delayed(const Duration(milliseconds: 500));
-    setState(() => _isLoading = false);
-    Get.offAllNamed(AppRoutes.HOME);
-    Get.snackbar('Success', 'Password updated successfully. Welcome!');
+    try {
+      final api = Get.find<ApiProvider>();
+      final response = await api.put(
+        ApiConstants.changePassword,
+        body: {
+          'current_password': _currentPasswordController.text,
+          'new_password': _newPasswordController.text,
+        },
+        requiresAuth: true,
+      );
+
+      if (response.statusCode == 200) {
+        if (Get.isRegistered<AuthService>()) {
+          await Get.find<AuthService>().fetchCurrentProfile();
+        }
+        Get.offAllNamed(AppRoutes.MAIN_LAYOUT);
+        Get.snackbar(
+          'Success',
+          'Password updated successfully. Welcome!',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: AppColors.success,
+          colorText: Colors.white,
+        );
+      } else {
+        String msg = 'Failed to change password';
+        try {
+          final err = jsonDecode(response.body);
+          if (err['detail'] != null) msg = err['detail'].toString();
+        } catch (_) {}
+        Get.snackbar(
+          'Error',
+          msg,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: AppColors.error,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
   void dispose() {
+    _currentPasswordController.dispose();
     _newPasswordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();

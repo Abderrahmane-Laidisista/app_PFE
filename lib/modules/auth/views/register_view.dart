@@ -106,7 +106,7 @@ class RegisterView extends GetView<RegisterController> {
                         prefixIcon: Icon(Icons.lock_outline),
                         helperText: 'Minimum 8 characters with letters and numbers',
                       ),
-                      validator: (v) => (v == null || v.length < 6) ? 'Password must be at least 6 characters' : null,
+                      validator: (v) => (v == null || v.length < 8) ? 'Password must be at least 8 characters' : null,
                     ),
                     const SizedBox(height: 16),
                     TextFormField(

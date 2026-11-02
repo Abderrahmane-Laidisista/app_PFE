@@ -34,6 +34,7 @@ class ApiConstants {
   static const String refresh = '/auth/refresh';
   static const String logout = '/auth/logout';
   static const String me = '/auth/me';
+  static const String changePassword = '/auth/change-password';
 
   // ── Inference / Diagnostic Endpoints ───────────────────────────
   static const String predict = '/predict';
@@ -42,7 +43,7 @@ class ApiConstants {
   static const String analyses = '/analyses';
   static String analysisDetail(String id) => '/analyses/$id';
   static String analysisFeedback(String id) => '/analyses/$id/feedback';
-  static String analysisPdf(String id) => '/analyses/$id/pdf';
+  static String analysisPdf(String id) => '/analyses/$id/export-pdf';
 
   // ── Patient Management & Lesion Timelines ──────────────────────
   static const String patients = '/patients';

@@ -66,7 +66,7 @@ class ConsentView extends GetView<ConsentController> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'This dermoscopy image and associated clinical variables will be processed by MedAssist AI deep neural networks (PyTorch ResNet-50) solely to provide clinical decision support and risk stratification.',
+                    'This dermoscopy image and associated clinical variables will be processed by MedAssist AI deep neural networks (PyTorch EfficientNet-B3) solely to provide clinical decision support and risk stratification.',
                     style: Get.textTheme.bodySmall?.copyWith(height: 1.4),
                   ),
                   const SizedBox(height: 12),
