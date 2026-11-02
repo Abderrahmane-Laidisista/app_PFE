@@ -14,7 +14,7 @@ class SettingsController extends GetxController {
   final currentLanguage = 'en'.obs;
   final isDarkMode = false.obs;
 
-  bool get isAuthenticated => _localStorage.isAuthenticated;
+  bool get isAuthenticated => _auth.isAuthenticated;
   String? get doctorName => _auth.doctorFullName;
 
   @override

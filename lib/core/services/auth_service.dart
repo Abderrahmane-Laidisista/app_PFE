@@ -16,13 +16,15 @@ class AuthService extends GetxService {
 
   final Rx<UserModel?> currentUser = Rx<UserModel?>(null);
   final RxBool isLoading = false.obs;
+  final RxBool isLoggedIn = false.obs;
 
-  bool get isAuthenticated => _storage.isAuthenticated;
+  bool get isAuthenticated => isLoggedIn.value;
   bool get isDoctor => currentUser.value?.isDoctor ?? (_storage.userRole == 'doctor' || _storage.userRole == 'admin');
   bool get isPending => currentUser.value?.isPending ?? false;
   String? get doctorFullName => currentUser.value?.profile?.fullName ?? _storage.doctorFullName;
 
   Future<AuthService> init() async {
+    isLoggedIn.value = _storage.isAuthenticated;
     // Restore cached user profile if present
     final cached = _storage.getUserProfile();
     if (cached != null) {
@@ -59,6 +61,7 @@ class AuthService extends GetxService {
           accessToken: authResponse.accessToken,
           refreshToken: authResponse.refreshToken,
         );
+        isLoggedIn.value = true;
 
         if (authResponse.user != null) {
           currentUser.value = authResponse.user;
@@ -128,11 +131,16 @@ class AuthService extends GetxService {
 
   /// Fetch currently authenticated doctor profile from backend
   Future<UserModel?> fetchCurrentProfile() async {
-    if (!isAuthenticated) return null;
+    if (!_storage.isAuthenticated) {
+      isLoggedIn.value = false;
+      return null;
+    }
+    isLoggedIn.value = true;
     try {
       final response = await _api.get(
         ApiConstants.me,
         requiresAuth: true,
+        timeout: const Duration(seconds: 4),
       );
 
       if (response.statusCode == 200) {
@@ -161,7 +169,8 @@ class AuthService extends GetxService {
       }
     } catch (_) {}
     await _storage.clearSession();
+    isLoggedIn.value = false;
     currentUser.value = null;
-    Get.offAllNamed(AppRoutes.LOGIN);
+    Get.offAllNamed(AppRoutes.HOME);
   }
 }
