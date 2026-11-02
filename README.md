@@ -4,7 +4,7 @@
 [![Dart](https://img.shields.io/badge/Dart-3.x-0175C2.svg?logo=dart&logoColor=white)](https://dart.dev)
 [![GetX](https://img.shields.io/badge/GetX-State_Management-8A2BE2.svg)](https://pub.dev/packages/get)
 [![Architecture](https://img.shields.io/badge/Architecture-Clean_Architecture-green.svg)](https://flutter.dev)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: Proprietary](https://img.shields.io/badge/License-Proprietary_All_Rights_Reserved-red.svg)](LICENSE)
 
 A cross-platform Flutter application engineered for clinical practitioners, general practitioners, and dermatologists to perform automated multimodal skin lesion screening, clinical triage, tele-dermatology referrals, and follow-up tracking.
 
@@ -134,7 +134,7 @@ All 134 Dart source files pass structural and syntax balance checks with 0 broke
 
 ## ⚖️ License & Medical Disclaimer
 
-This project is licensed under the [MIT License](LICENSE).
+This project is **Proprietary & Confidential**. All rights are reserved by the authors under the legal framework of Algerian Ministerial Decree 1275 (*Diplôme-Startup / Un brevet*). No part of this mobile application source code, UI designs, or assets may be copied, reproduced, modified, distributed, or published on app stores or private channels without prior written authorization from the authors. Academic review is granted exclusively to the university examination jury. See [LICENSE](LICENSE) for full legal terms.
 
 > **⚠️ Medical Decision Support Disclaimer**:  
 > MedAssist AI is designed exclusively as an assistive decision support tool for medical professionals. Algorithmic outputs must always be evaluated in conjunction with comprehensive clinical correlation and histopathological examination.
