@@ -62,7 +62,7 @@ class CameraView extends GetView<ctrl.CameraGetxController> {
   
   Widget _buildCameraOverlay() {
     return Container(
-      color: Colors.black.withOpacity(0.5),
+      color: Colors.black.withValues(alpha: 0.5),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -91,7 +91,7 @@ class CameraView extends GetView<ctrl.CameraGetxController> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.7),
+                color: Colors.black.withValues(alpha: 0.7),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
@@ -151,7 +151,7 @@ class CameraView extends GetView<ctrl.CameraGetxController> {
             padding: const EdgeInsets.all(16),
             margin: const EdgeInsets.only(bottom: 24),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.6),
+              color: Colors.black.withValues(alpha: 0.6),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -175,7 +175,7 @@ class CameraView extends GetView<ctrl.CameraGetxController> {
                   child: Text(
                     tip.tr,
                     style: Get.textTheme.bodySmall?.copyWith(
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                     ),
                   ),
                 )),
@@ -246,7 +246,7 @@ class CameraView extends GetView<ctrl.CameraGetxController> {
                   Obx(() => Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: _getQualityColor().withOpacity(0.9),
+                      color: _getQualityColor().withValues(alpha: 0.9),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(

@@ -11,7 +11,7 @@ class EducationView extends GetView<EducationController> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('ABCDE Rule'),
+        title: Text('education_title'.tr),
         centerTitle: true,
         backgroundColor: Colors.white,
         foregroundColor: AppColors.textPrimary,
@@ -32,7 +32,7 @@ class EducationView extends GetView<EducationController> {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withOpacity(0.2),
+                    color: AppColors.primary.withValues(alpha: 0.2),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -43,7 +43,7 @@ class EducationView extends GetView<EducationController> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -58,7 +58,7 @@ class EducationView extends GetView<EducationController> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Skin Cancer Detection',
+                          'education_header_title'.tr,
                           style: Get.textTheme.titleLarge?.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -66,9 +66,9 @@ class EducationView extends GetView<EducationController> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Learn the ABCDE rule to identify potential melanomas.',
+                          'education_header_subtitle'.tr,
                           style: Get.textTheme.bodyMedium?.copyWith(
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha: 0.9),
                           ),
                         ),
                       ],
@@ -81,7 +81,7 @@ class EducationView extends GetView<EducationController> {
             const SizedBox(height: 24),
             
             Text(
-              'The ABCDE Rule',
+              'education_section_title'.tr,
               style: Get.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
@@ -93,8 +93,8 @@ class EducationView extends GetView<EducationController> {
             // A - Asymmetry
             _buildAbcdeCard(
               letter: 'A',
-              title: 'Asymmetry',
-              description: 'One half of the mole does not match the other half. Normal moles are generally symmetrical.',
+              title: 'abcde_a_title'.tr,
+              description: 'abcde_a_desc'.tr,
               color: const Color(0xFFE91E63),
               icon: Icons.flip,
             ),
@@ -102,8 +102,8 @@ class EducationView extends GetView<EducationController> {
             // B - Border
             _buildAbcdeCard(
               letter: 'B',
-              title: 'Border',
-              description: 'The edges are irregular, ragged, notched, or blurred. Normal moles have well-defined, smooth borders.',
+              title: 'abcde_b_title'.tr,
+              description: 'abcde_b_desc'.tr,
               color: const Color(0xFFFF9800),
               icon: Icons.border_style,
             ),
@@ -111,8 +111,8 @@ class EducationView extends GetView<EducationController> {
             // C - Color
             _buildAbcdeCard(
               letter: 'C',
-              title: 'Color',
-              description: 'The color is not the same all over and may include shades of brown or black, or sometimes with patches of pink, red, white, or blue.',
+              title: 'abcde_c_title'.tr,
+              description: 'abcde_c_desc'.tr,
               color: const Color(0xFF9C27B0),
               icon: Icons.palette_outlined,
             ),
@@ -120,8 +120,8 @@ class EducationView extends GetView<EducationController> {
             // D - Diameter
             _buildAbcdeCard(
               letter: 'D',
-              title: 'Diameter',
-              description: 'The spot is larger than 6 millimeters across (about the size of a pencil eraser), although melanomas can sometimes be smaller than this.',
+              title: 'abcde_d_title'.tr,
+              description: 'abcde_d_desc'.tr,
               color: const Color(0xFF2196F3),
               icon: Icons.straighten,
             ),
@@ -129,8 +129,8 @@ class EducationView extends GetView<EducationController> {
             // E - Evolving
             _buildAbcdeCard(
               letter: 'E',
-              title: 'Evolving',
-              description: 'The mole is changing in size, shape, or color over time. This is often the most important warning sign.',
+              title: 'abcde_e_title'.tr,
+              description: 'abcde_e_desc'.tr,
               color: const Color(0xFFF44336),
               icon: Icons.timeline,
             ),
@@ -141,10 +141,10 @@ class EducationView extends GetView<EducationController> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.error.withOpacity(0.1),
+                color: AppColors.error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: AppColors.error.withOpacity(0.3),
+                  color: AppColors.error.withValues(alpha: 0.3),
                 ),
               ),
               child: Row(
@@ -157,7 +157,7 @@ class EducationView extends GetView<EducationController> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'If you notice any of these signs, please consult a dermatologist immediately. Early detection is key.',
+                      'education_warning'.tr,
                       style: Get.textTheme.bodyMedium?.copyWith(
                         color: AppColors.error,
                         fontWeight: FontWeight.w600,
@@ -206,7 +206,7 @@ class EducationView extends GetView<EducationController> {
               width: 54,
               height: 54,
               decoration: BoxDecoration(
-                color: color.withOpacity(0.15),
+                color: color.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Center(
@@ -235,7 +235,7 @@ class EducationView extends GetView<EducationController> {
                         ),
                       ),
                       const Spacer(),
-                      Icon(icon, color: color.withOpacity(0.7), size: 20),
+                      Icon(icon, color: color.withValues(alpha: 0.7), size: 20),
                     ],
                   ),
                   const SizedBox(height: 6),

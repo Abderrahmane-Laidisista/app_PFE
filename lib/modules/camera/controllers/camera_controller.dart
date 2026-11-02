@@ -129,7 +129,7 @@ class CameraGetxController extends GetxController {
     if (capturedImagePath.value != null) {
       // Navigate to Clinical Form with image path
       Get.offNamed(
-        AppRoutes.CLINICAL_FORM,
+        AppRoutes.CONSENT,
         arguments: {'imagePath': capturedImagePath.value},
       );
     }

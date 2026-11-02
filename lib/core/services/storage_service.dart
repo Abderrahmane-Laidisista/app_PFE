@@ -62,7 +62,7 @@ class StorageService extends GetxService {
   }
   
   // API URL
-  String get apiUrl => _box.read(KEY_API_URL) ?? 'http://192.168.222.111:8000/api/v1';
+  String get apiUrl => _box.read(KEY_API_URL) ?? 'http://10.0.2.2:8000/api/v1';
   
   Future<void> setApiUrl(String url) async {
     await _box.write(KEY_API_URL, url);
