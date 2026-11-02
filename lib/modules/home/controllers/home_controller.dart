@@ -15,14 +15,28 @@ class HomeController extends GetxController {
 
   final isLoading = false.obs;
 
-  bool get isAuthenticated => _storage.isAuthenticated;
-  bool get isDoctor => _auth.isDoctor;
-  String? get clinicianName => _auth.doctorFullName;
+  final RxBool isAuthenticated = false.obs;
+  final RxBool isDoctor = false.obs;
+  final RxnString clinicianName = RxnString();
 
   @override
   void onInit() {
     super.onInit();
+    _syncAuthState();
+    ever(_auth.currentUser, (_) => _syncAuthState());
     _checkConnectivity();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    _syncAuthState();
+  }
+
+  void _syncAuthState() {
+    isAuthenticated.value = _storage.isAuthenticated || _auth.currentUser.value != null;
+    isDoctor.value = _auth.isDoctor;
+    clinicianName.value = _auth.doctorFullName;
   }
 
   void _checkConnectivity() {

@@ -59,7 +59,7 @@ class HomeView extends GetView<HomeController> {
                             ),
                             const SizedBox(height: 4),
                             Obx(() {
-                              if (controller.isAuthenticated) {
+                              if (controller.isAuthenticated.value) {
                                 return Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                                   decoration: BoxDecoration(
@@ -67,7 +67,7 @@ class HomeView extends GetView<HomeController> {
                                     borderRadius: BorderRadius.circular(16),
                                   ),
                                   child: Text(
-                                    'Dr. ${controller.clinicianName ?? "Clinician"} (Active)',
+                                    'Dr. ${controller.clinicianName.value ?? "Clinician"} (Active)',
                                     style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13),
                                   ),
                                 );
@@ -97,7 +97,7 @@ class HomeView extends GetView<HomeController> {
               ),
               actions: [
                 Obx(() {
-                  if (controller.isAuthenticated) {
+                  if (controller.isAuthenticated.value) {
                     return IconButton(
                       icon: const Icon(Icons.account_circle, color: Colors.white),
                       tooltip: 'Clinician Profile',
@@ -125,7 +125,7 @@ class HomeView extends GetView<HomeController> {
                   children: [
                     // Guest Notice (if unauthenticated)
                     Obx(() {
-                      if (!controller.isAuthenticated) {
+                      if (!controller.isAuthenticated.value) {
                         return Container(
                           margin: const EdgeInsets.only(bottom: 20),
                           padding: const EdgeInsets.all(14),
