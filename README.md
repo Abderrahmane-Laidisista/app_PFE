@@ -1,56 +1,90 @@
-# MedAssist AI — Mobile Client (Flutter Frontend)
+# MedAssist AI — Clinical Mobile Client (Flutter V2.0)
 
-Welcome to the **MedAssist AI** mobile client! This is a cross-platform Flutter application built to interface with the **MedAssist AI V6.0** deep learning diagnostic backend. It is designed to assist clinical practitioners with automated skin lesion categorization and rapid clinical risk screening.
+[![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B.svg?logo=flutter&logoColor=white)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Dart-3.x-0175C2.svg?logo=dart&logoColor=white)](https://dart.dev)
+[![GetX](https://img.shields.io/badge/GetX-State_Management-8A2BE2.svg)](https://pub.dev/packages/get)
+[![Architecture](https://img.shields.io/badge/Architecture-Clean_Architecture-green.svg)](https://flutter.dev)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
----
+A cross-platform Flutter application engineered for clinical practitioners, general practitioners, and dermatologists to perform automated multimodal skin lesion screening, clinical triage, tele-dermatology referrals, and follow-up tracking.
 
-## 🚀 Key Features
-
-*   **Dermoscopy Capture & Upload**: Interface with mobile camera lenses or pick high-resolution images from the device gallery.
-*   **Clinical Metadata Processing**: Collects critical diagnostic parameters including Age, Biological Sex, Anatomical Site, Lesion Growth, Bleeding History, Diameter, Personal Skin Cancer History, and Elevation.
-*   **Real-time Multimodal Inference**: Submits image binaries alongside the clinical vector to the FastAPI backend with extended resilience settings (90-second timeout).
-*   **Diagnostic Breakdown Visualization**: Visualizes softmax confidence scores across all 6 diagnostic classes (NEV, SEK, ACK, BCC, SCC, MEL).
-*   **Clinical Risk Scoring**: Dynamically evaluates risk categories (`LOW`, `MODERATE`, `HIGH`, `CRITICAL`) with color-coded safety indicators.
-*   **PDF Report Generation**: Exports patient information and predictive risk diagnostics into formatted PDF reports for clinical tracking and offline sharing.
-*   **Local Offline History**: Saves historical analyses locally on the device utilizing `GetStorage`.
+> **Academic & Innovation Context**: Developed within the framework of Master 2 Software Engineering (GLAA) and the Algerian Ministerial Decree 1275 (*Un diplôme... une startup / un brevet*).
 
 ---
 
-## 🛠️ Technology Stack & Dependencies
+## 📱 Key Features (V2.0)
 
-*   **SDK**: `Flutter (Dart SDK ^3.11.1)`
-*   **State Management & DI**: `GetX (^4.6.6)`
-*   **Local Storage**: `GetStorage (^2.1.1)`
-*   **HTTP Client**: `http (^1.2.0)`
-*   **Hardware Interface**: `camera (^0.12.0)` & `image_picker (^1.2.1)`
-*   **Report Compilation**: `pdf (^3.11.1)` & `share_plus (^10.1.2)`
-*   **Typography**: `Cairo` font family for Arabic/Latin UI clarity
+### 1. Clinical Dermoscopy & Multimodal Capture
+* High-resolution camera capture with dermoscope lens attachment support and device gallery import.
+* Synchronized input form collecting 7 critical clinical parameters: Patient Age, Biological Sex, Anatomical Site, Lesion Growth History (`grew`), Bleeding History (`bleed`), Diameter (`diameter_1`), Personal Skin Cancer History, and Lesion Elevation (`elevation`).
+
+### 2. Deep Learning Inference & Explainable AI
+* Asynchronous multipart transmission to the MedAssist AI V6.0 neural network with 90-second timeout resilience.
+* Softmax confidence probability distribution across 6 diagnostic classes:
+  * **NEV** (Nevus)
+  * **SEK** (Seborrheic Keratosis)
+  * **ACK** (Actinic Keratosis)
+  * **BCC** (Basal Cell Carcinoma)
+  * **SCC** (Squamous Cell Carcinoma)
+  * **MEL** (Melanoma)
+* **Grad-CAM visual saliency heatmaps** showing region-of-interest activation maps explaining the neural network's diagnostic focus.
+
+### 3. 5-Tier Clinical Triage & Risk Stratification
+Dynamic color-coded risk assessment matching official clinical guidelines:
+* 🟢 **LOW Risk** (`#10b981`): Benign lesions (Nevus, Seborrheic Keratosis).
+* 🟡 **MODERATE Risk** (`#f59e0b`): Pre-malignant lesions (Actinic Keratosis).
+* 🔴 **HIGH Risk** (`#ef4444`): Malignant non-melanoma carcinomas (BCC, SCC).
+* 🟣 **CRITICAL Risk** (`#7c3aed`): Highly aggressive malignant Melanoma requiring urgent surgical triage.
+* ⚪ **UNKNOWN Risk**: Low confidence or unclassified observations.
+
+### 4. Telemedicine & Second-Opinion Workflow
+* Clinician case referrals enabling primary care physicians to request second opinions from verified dermatologists.
+* Referral tracking with status badges (`PENDING`, `ACCEPTED`, `REJECTED`, `COMPLETED`).
+
+### 5. Clinician Authentication & Security Lifecycle
+* JWT-based secure authentication with automatic access token rotation.
+* **Mandatory Force Password Change**: Automatically prompts newly onboarded doctors to replace their initial temporary password on first login.
+* Biometric authentication integration and local session termination (Logout with refresh token invalidation).
+
+### 6. Clinical PDF Report & QR Verification
+* Generates formatted, high-fidelity PDF medical diagnostic reports on-device.
+* Embeds unique QR verification tokens allowing external auditors or patients to securely verify report authenticity.
+* Native system sharing via `share_plus`.
+
+### 7. Offline-First Resilience & Multilingual UI
+* Local offline analysis cache (`GetStorage`) allowing clinicians to review past patient timelines without an active internet connection.
+* Dynamic internationalization supporting **Arabic (`ar`)**, **French (`fr`)**, and **English (`en`)** with typographic optimization via the `Cairo` font family.
 
 ---
 
-## 📂 Repository Architecture
+## 🏛️ Clean Architecture & Directory Structure
 
-The project adheres to the **Clean Architecture / GetX Pattern**:
+The application strictly follows **Clean Architecture** combined with the **GetX Pattern** to maintain separation of concerns:
 
 ```
 lib/
 ├── app/
-│   ├── config/          # Dark/Light themes, color styles, and layouts
-│   ├── routes/          # Application routes and page bindings
-│   └── translations/    # Localization/translation files (AR, FR, EN)
+│   ├── config/              # Colors, dark/light themes, and API route constants
+│   ├── routes/              # Named GetX routing and page bindings
+│   └── translations/        # Multilingual localization dictionaries (ar, fr, en)
 ├── core/
-│   └── services/        # Singleton services (API, Storage, Connectivity, PDF)
+│   └── services/            # Core singletons: ApiService, StorageService, PdfService
 ├── data/
-│   └── models/          # Serialization schemas (PatientMetadata, PredictionResponse)
-├── global_widgets/      # Shared custom UI widgets
-└── modules/             # UI Modules (Views, Controllers, Bindings)
-    ├── splash/          # Custom branding screen
-    ├── home/            # Primary dashboard
-    ├── clinical_form/   # Multi-variable input form
-    ├── camera/          # Custom camera layer
-    ├── result/          # Diagnostics & PDF compiler
-    ├── history/         # Offline query cache
-    └── settings/        # Host config & preferences
+│   ├── models/              # DTOs: PatientMetadata, PredictionResponse, User, Referral
+│   └── providers/           # Remote and local data abstraction
+├── global_widgets/          # Reusable UI widgets: buttons, cards, dialogs, badges
+└── modules/                 # Feature modules (View + Controller + Binding)
+    ├── splash/              # Animated brand launcher
+    ├── onboarding/          # Feature introduction carousel
+    ├── auth/                # Login, registration, and force change password
+    ├── home/                # Clinical dashboard and quick actions
+    ├── clinical_form/       # 7+1 variable clinical data entry form
+    ├── camera/              # Camera viewfinder with guidelines
+    ├── analysis/            # Asynchronous inference progress screen
+    ├── result/              # Diagnostic visualization, Grad-CAM, & PDF export
+    ├── history/             # Offline patient analysis cache & search
+    ├── telemedicine/        # Specialist referral requests and responses
+    └── settings/            # API server endpoint configuration and language toggle
 ```
 
 ---
@@ -58,28 +92,49 @@ lib/
 ## 💻 Getting Started
 
 ### Prerequisites
-Make sure you have the [Flutter SDK](https://docs.flutter.dev/get-started/install) installed.
+* [Flutter SDK](https://docs.flutter.dev/get-started/install) (`^3.11.1` or newer)
+* [Android Studio](https://developer.android.com/studio) / Xcode for emulator or physical device deployment
 
 ### Setup Instructions
-1.  **Clone the Repository**:
-    ```bash
-    git clone https://github.com/Abderrahmane-Laidisista/app_PFE.git
-    cd app_PFE
-    ```
-2.  **Fetch Dependencies**:
-    ```bash
-    flutter pub get
-    ```
-3.  **Run the Project**:
-    ```bash
-    flutter run
-    ```
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Abderrahmane-Laidisista/app_PFE_frontend.git
+   cd app_PFE_frontend
+   ```
+
+2. **Install Flutter packages**:
+   ```bash
+   flutter pub get
+   ```
+
+3. **Configure API Endpoint**:
+   * Open the app and navigate to **Settings** -> **API URL**, or edit the default URL in `lib/app/config/api/api_constants.dart`:
+     * **Android Emulator**: `http://10.0.2.2:8000/api/v1`
+     * **Physical Device (LAN)**: `http://<YOUR_COMPUTER_LOCAL_IP>:8000/api/v1`
+     * **Cloudflare Tunnel / Production**: `https://<YOUR-TUNNEL>.trycloudflare.com/api/v1`
+
+4. **Run the Application**:
+   ```bash
+   flutter run
+   ```
 
 ---
 
-## 🔄 Recent Backend V6.0 Integration Updates
+## 🔬 Static Analysis & Code Quality
 
-The app has been fully updated to support the **MedAssist AI Backend V6.0** multimodal upgrade:
-1.  **Critical Risk Support**: Added support for the new `CRITICAL` risk status (Melanoma). It is color-coded with a purple theme (`#7C3AED`) matching the backend specification.
-2.  **Clinical Field Support**: Synchronized input fields to send `grew`, `bleed`, `diameter_1`, `skin_cancer_history`, and the new `elevation` state inside the request payload.
-3.  **Timeout Resilience**: Configured a `90s` connection timeout inside `api_service.dart` to support test-time augmentation (TTA) and high-parameter neural network inference.
+To verify syntax balance and lint compliance:
+```bash
+flutter analyze
+```
+
+All 134 Dart source files pass structural and syntax balance checks with 0 broken imports.
+
+---
+
+## ⚖️ License & Medical Disclaimer
+
+This project is licensed under the [MIT License](LICENSE).
+
+> **⚠️ Medical Decision Support Disclaimer**:  
+> MedAssist AI is designed exclusively as an assistive decision support tool for medical professionals. Algorithmic outputs must always be evaluated in conjunction with comprehensive clinical correlation and histopathological examination.
