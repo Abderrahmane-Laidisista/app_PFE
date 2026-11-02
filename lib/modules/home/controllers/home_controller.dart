@@ -15,7 +15,7 @@ class HomeController extends GetxController {
 
   final isLoading = false.obs;
 
-  bool get isAuthenticated => _storage.isAuthenticated;
+  bool get isAuthenticated => _auth.isAuthenticated;
   bool get isDoctor => _auth.isDoctor;
   String? get clinicianName => _auth.doctorFullName;
 
