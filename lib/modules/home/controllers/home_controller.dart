@@ -4,13 +4,11 @@ import 'package:image_picker/image_picker.dart';
 import '../../../app/routes/app_routes.dart';
 import '../../../core/services/auth_service.dart';
 import '../../../core/services/connectivity_service.dart';
-import '../../../data/providers/local_storage_provider.dart';
 import '../../main_layout/controllers/main_layout_controller.dart';
 
 class HomeController extends GetxController {
   final ConnectivityService _connectivityService = Get.find<ConnectivityService>();
   final AuthService _auth = Get.find<AuthService>();
-  final LocalStorageProvider _storage = Get.find<LocalStorageProvider>();
   final ImagePicker _imagePicker = ImagePicker();
 
   final isLoading = false.obs;
@@ -22,23 +20,33 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _checkConnectivity();
+    _listenConnectivity();
   }
 
-  void _checkConnectivity() {
-    if (!_connectivityService.isOnline.value) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+  void _listenConnectivity() {
+    // Listen to network status changes without blocking startup navigation
+    ever(_connectivityService.isOnline, (bool isOnline) {
+      if (!isOnline && Get.currentRoute == AppRoutes.HOME) {
         Get.snackbar(
           "Offline Mode",
           "You are offline. Diagnostic histories will load from local cache.",
           snackPosition: SnackPosition.BOTTOM,
         );
-      });
-    }
+      }
+    });
   }
 
   // Navigate to Camera Screen
   Future<void> takePhoto() async {
+    if (!isAuthenticated) {
+      Get.snackbar(
+        'Clinician Login Required',
+        'Please sign in with your verified clinician account to access diagnostic AI.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      openLogin();
+      return;
+    }
     try {
       Get.toNamed(AppRoutes.CAMERA);
     } catch (e) {
@@ -49,6 +57,15 @@ class HomeController extends GetxController {
 
   // Upload from Gallery
   Future<void> uploadFromGallery() async {
+    if (!isAuthenticated) {
+      Get.snackbar(
+        'Clinician Login Required',
+        'Please sign in with your verified clinician account to access diagnostic AI.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      openLogin();
+      return;
+    }
     try {
       final XFile? image = await _imagePicker.pickImage(
         source: ImageSource.gallery,

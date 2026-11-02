@@ -43,19 +43,13 @@ class ConnectivityService extends GetxService {
   }
 
   Future<bool> _hasInternetAccess() async {
-
     try {
-
-      final result = await InternetAddress.lookup('google.com');
-
+      final result = await InternetAddress.lookup('google.com')
+          .timeout(const Duration(seconds: 4));
       return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
-
     } catch (_) {
-
       return false;
-
     }
-
   }
 
   Future<bool> checkInternet() async {
